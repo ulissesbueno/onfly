@@ -4,26 +4,8 @@ services:
     image: phorte/php8-fpm
     volumes:
       - ./:/var/www/
-    networks:
-      - onfly
-      - proxy-net
     depends_on:
       - onfly-db
-
-  onfly-queue:
-    container_name: queue.onfly
-    image: phorte/php8-fpm
-    command: php artisan queue:work --verbose --tries=3 --timeout=90
-    volumes:
-      - ./:/var/www/
-    working_dir: /var/www
-    restart: always
-    depends_on:
-      - onfly-db
-      - onfly-app
-    networks:
-      - onfly
-      - proxy-net
 
   onfly-nginx:
     container_name: nginx.onfly
@@ -35,9 +17,6 @@ services:
       - .docker/confs/nginx/certs/:/etc/nginx/certs:ro
     ports:
       - "8080:80"
-    networks:
-      - onfly
-      - proxy-net
     depends_on:
       - onfly-app
 
@@ -48,22 +27,13 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: onfly
-      MYSQL_USER: onfly_user
+      MYSQL_USER: onfly
       MYSQL_PASSWORD: secret
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./database:/var/database
-    networks:
-      - onfly
-      - proxy-net
-
-networks:
-  onfly:
-    driver: bridge
-  proxy-net:
-    external: true  
+      - ./database:/var/database 
 
 volumes:
   mysql_data:
