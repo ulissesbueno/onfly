@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Application\UseCases\SaveTravelOrderUseCase;
+use App\Domain\Entities\TravelOrder;
+use App\Domain\Repositories\TravelOrderRepositoryInterface;
+use App\Infrastructure\Repositories\TravelOrderRepository;
+use App\OwnerManager\UserOwnerManager;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +16,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(UserOwnerManager::class, function () {
+            return new UserOwnerManager();
+        });
+
+        $this->app->bind(SaveTravelOrderUseCase::class, function ($app) {
+            return new SaveTravelOrderUseCase($app->make(TravelOrderRepository::class));
+        });
+
     }
 
     /**
