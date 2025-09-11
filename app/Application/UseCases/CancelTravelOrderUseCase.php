@@ -7,9 +7,12 @@ use App\Domain\Enums\TravelOrderStatus;
 use App\Domain\Repositories\TravelOrderRepositoryInterface;
 use Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Application\UseCases\Traits\RulesTravelOrderStatus;
 
-class UpdateStatusTravelOrderUseCase
+class CancelTravelOrderUseCase
 {
+    use RulesTravelOrderStatus;
+
     private $repository;
 
     public function __construct(TravelOrderRepositoryInterface $repository)
@@ -17,7 +20,7 @@ class UpdateStatusTravelOrderUseCase
         $this->repository = $repository;
     }
 
-    public function execute(int $id, TravelOrderStatus $status): ?TravelOrder
+    public function execute(int $id): ?TravelOrder
     {
         $order = $this->repository->findById($id);
         
@@ -31,21 +34,7 @@ class UpdateStatusTravelOrderUseCase
         $this->ruleSomeUserCannotChangeOwnRequest($order, $currentUserId);
         $this->ruleOnlyPendingOrdersCanBeUpdated($order);
 
-        $order->setStatus($status);
+        $order->setStatus(TravelOrderStatus::CANCELLED);
         return $this->repository->update($order);
-    }
-
-    private function ruleSomeUserCannotChangeOwnRequest(TravelOrder $order, ?int $currentUserId): void
-    {
-        if ($order->userId === $currentUserId) {
-            throw new Exception("O usuário que fez o pedido não pode alterar o status.");
-        }
-    }
-
-    private function ruleOnlyPendingOrdersCanBeUpdated(TravelOrder $order): void
-    {
-        if ($order->status !== TravelOrderStatus::PENDING) {
-            throw new Exception("Apenas pedidos com status 'pendente' podem ser atualizados.");
-        }
     }
 }

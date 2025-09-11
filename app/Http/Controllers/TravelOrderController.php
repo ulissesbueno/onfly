@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Application\UseCases\ApproveTravelOrderUseCase;
+use App\Application\UseCases\CancelTravelOrderUseCase;
 use App\Application\UseCases\GetTravelOrderUseCase;
 use App\Application\UseCases\ListTravelOrderUseCase;
 use App\Application\UseCases\SaveTravelOrderUseCase;
@@ -31,28 +33,28 @@ class TravelOrderController extends Controller
         return response()->json($order, 201);
     }
 
-    public function updateStatus(int $id, string $status)
-    {
-        $validator = validator(
-            ['status' => $status],
-            ['status' => ['in:approved,cancelled']]
-        );
-        
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
+    public function approve(int $id)
+    {   
         try {
-            $order = app(UpdateStatusTravelOrderUseCase::class)->execute(
-                $id,
-                TravelOrderStatus::from($status)
-            );
+            $order = app(ApproveTravelOrderUseCase::class)->execute($id);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
         return response()->json($order, 200);
     }
+
+    public function cancel(int $id)
+    {   
+        try {
+            $order = app(CancelTravelOrderUseCase::class)->execute($id);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+
+        return response()->json($order, 200);
+    }
+    
 
     public function show(int $id)
     {
