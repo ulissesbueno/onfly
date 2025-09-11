@@ -9,5 +9,5 @@ interface TravelOrderRepositoryInterface
     public function create(TravelOrder $order): TravelOrder;
     public function findById(int $id): ?TravelOrder;
     public function update(TravelOrder $order): TravelOrder;
-    public function findAll(): array;
+    public function findAll(array $filter = []): array;
 }
