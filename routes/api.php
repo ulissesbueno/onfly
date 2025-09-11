@@ -15,5 +15,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/travel-order/list', [TravelOrderController::class, 'index']);
     Route::post('/travel-order', [TravelOrderController::class, 'store']);
+    Route::get('/travel-order/{id}', [TravelOrderController::class, 'show']);
+    Route::put('/travel-order/{id}/status/{status}', [TravelOrderController::class, 'updateStatus']);
 });

@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Application\UseCases\SaveTravelOrderUseCase;
-use App\Domain\Entities\TravelOrder;
 use App\Domain\Repositories\TravelOrderRepositoryInterface;
 use App\Infrastructure\Repositories\TravelOrderRepository;
 use App\OwnerManager\UserOwnerManager;
@@ -20,9 +18,8 @@ class AppServiceProvider extends ServiceProvider
             return new UserOwnerManager();
         });
 
-        $this->app->bind(SaveTravelOrderUseCase::class, function ($app) {
-            return new SaveTravelOrderUseCase($app->make(TravelOrderRepository::class));
-        });
+        $this->app->bind(TravelOrderRepositoryInterface::class, TravelOrderRepository::class);
+        
 
     }
 
