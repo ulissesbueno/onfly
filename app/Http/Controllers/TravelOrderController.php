@@ -7,11 +7,8 @@ use App\Application\UseCases\CancelTravelOrderUseCase;
 use App\Application\UseCases\GetTravelOrderUseCase;
 use App\Application\UseCases\ListTravelOrderUseCase;
 use App\Application\UseCases\SaveTravelOrderUseCase;
-use App\Application\UseCases\UpdateStatusTravelOrderUseCase;
-use App\Domain\Enums\TravelOrderStatus;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Exceptions\ValidationException;
-use Dotenv\Validator;
 
 class TravelOrderController extends Controller
 {
@@ -67,9 +64,33 @@ class TravelOrderController extends Controller
         return response()->json($order, 200);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $orders = app(ListTravelOrderUseCase::class)->execute();
+
+        try {
+            $request->validate([
+                'status' => 'in:pending,approved,canceled',
+                'destination' => 'string|max:255',
+                'periodo_start' => 'date',
+                'periodo_end' => 'date',
+                'page' => 'numeric',
+                'order_direction' => 'in:asc,desc',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw new ValidationException($e->validator);
+        }
+
+        $filter = $request->only([
+            'status',
+            'destination',
+            'periodo_start',
+            'periodo_end',
+            'page',
+            'per_page',
+            'order_direction'
+        ]);
+
+        $orders = app(ListTravelOrderUseCase::class)->execute($filter);
         return response()->json($orders, 200);
     }
 }

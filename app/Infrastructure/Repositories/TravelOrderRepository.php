@@ -8,6 +8,10 @@ use App\Domain\Entities\TravelOrder;
 
 class TravelOrderRepository implements TravelOrderRepositoryInterface
 {
+    const PER_PAGE = 10;
+    const DEFAULT_ORDER_DIRECTION = 'desc';
+    const PAGE = 1;
+
     public function create(TravelOrder $order): TravelOrder
     {
         $travelOrder = new TravelOrders();
@@ -64,11 +68,48 @@ class TravelOrderRepository implements TravelOrderRepositoryInterface
         );
     }
 
-    public function findAll(): array
+    public function findAll(array $filter = []): array
     {
-        $travelOrders = TravelOrders::all();
+        $query = TravelOrders::query();
+
+        $this->applyFilters($query, $filter);
+
+        $travelOrders = $query->get();
+
         return $travelOrders->map(function ($model) {
             return $this->mapModelToEntity($model);
         })->toArray();
+    }
+
+    private function applyFilters(&$query, array $filter)
+    {
+        if (!empty($filter['status'])) {
+            $query->where('status', $filter['status']);
+        }
+
+        if (!empty($filter['destination'])) {
+            $query->where('destination', 'like', '%' . $filter['destination'] . '%');
+        }
+
+        if (!empty($filter['periodo_start'])) {
+            $query->where('departure_date', '>=', $filter['periodo_start']);
+        }
+
+        if (!empty($filter['periodo_end'])) {
+            $query->where('return_date', '<=', $filter['periodo_end']);
+        }
+
+        if (empty($filter['order_direction'])) {
+            $filter['order_direction'] = self::DEFAULT_ORDER_DIRECTION;
+        }
+        
+        $query->orderBy('created_at', $filter['order_direction']);
+
+        if (empty($filter['page'])) {
+            $filter['page'] = self::PAGE;
+        }
+
+        $per_page = self::PER_PAGE;
+        $query->skip(($filter['page'] - 1) * $per_page)->take($per_page);
     }
 }

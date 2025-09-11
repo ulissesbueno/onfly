@@ -13,8 +13,8 @@ class ListTravelOrderUseCase
         $this->repository = $repository;
     }
 
-    public function execute(): array
+    public function execute(array $filter = []): array
     {
-        return $this->repository->findAll();
+        return $this->repository->findAll($filter);
     }
 }
