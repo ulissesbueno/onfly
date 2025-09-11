@@ -35,8 +35,8 @@ class TravelOrder
         $this->id = $id;
     }
 
-    public function setStatus(TravelOrderStatus $status): void
+    public function setStatus(string $status): void
     {
-        $this->status = $status->value;
+        $this->status = $status;
     }
 }
