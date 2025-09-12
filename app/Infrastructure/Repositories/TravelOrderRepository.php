@@ -5,6 +5,7 @@ namespace App\Infrastructure\Repositories;
 use App\Domain\Repositories\TravelOrderRepositoryInterface;
 use App\Models\TravelOrders;
 use App\Domain\Entities\TravelOrder;
+use App\Domain\Entities\User;
 
 class TravelOrderRepository implements TravelOrderRepositoryInterface
 {
@@ -23,7 +24,7 @@ class TravelOrderRepository implements TravelOrderRepositoryInterface
         $travelOrder->save();
 
         $order->id = $travelOrder->id;
-        $order->userId = $travelOrder->user_id;
+        $order->user = $travelOrder->user ? $this->mapUserModelToEntity($travelOrder->user) : null;
 
         return $order;
     }
@@ -63,8 +64,17 @@ class TravelOrderRepository implements TravelOrderRepositoryInterface
             departureDate: new \DateTime($model->departure_date),
             returnDate: new \DateTime($model->return_date),
             status: $model->status,
-            userId: $model->user_id,
+            user: $model->user ? $this->mapUserModelToEntity($model->user) : null,
             id: $model->id
+        );
+    }
+
+    private function mapUserModelToEntity($model): User
+    {
+        return new User(
+            id: $model->id,
+            name: $model->name,
+            email: $model->email,
         );
     }
 

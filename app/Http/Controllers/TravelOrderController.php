@@ -7,27 +7,24 @@ use App\Application\UseCases\CancelTravelOrderUseCase;
 use App\Application\UseCases\GetTravelOrderUseCase;
 use App\Application\UseCases\ListTravelOrderUseCase;
 use App\Application\UseCases\SaveTravelOrderUseCase;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Exceptions\ValidationException;
+use App\Http\Requests\FilterTravelOrderRequest;
+use App\Http\Requests\StoreTravelOrderRequest;
+use App\Http\Resources\TravelOrderResource;
 
 class TravelOrderController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreTravelOrderRequest $request)
     {
         try {
-            $data = $request->validate([
-                'requester_name' => 'required|string',
-                'destination'     => 'required|string|max:255',
-                'departure_date'  => 'required|date|after_or_equal:today',
-                'return_date'     => 'required|date|after_or_equal:departure_date',
-            ]);
+            $data = $request->validated();
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw new ValidationException($e->validator);
         }
         
         $order = app(SaveTravelOrderUseCase::class)->execute($data);
 
-        return response()->json($order, 201);
+        return new TravelOrderResource($order);
     }
 
     public function approve(int $id)
@@ -61,21 +58,13 @@ class TravelOrderController extends Controller
             return response()->json(['error' => 'Pedido não encontrado.'], 404);
         }
 
-        return response()->json($order, 200);
+        return new TravelOrderResource($order);
     }
 
-    public function index(Request $request)
+    public function index(FilterTravelOrderRequest $request)
     {
-
         try {
-            $request->validate([
-                'status' => 'in:pending,approved,canceled',
-                'destination' => 'string|max:255',
-                'periodo_start' => 'date',
-                'periodo_end' => 'date',
-                'page' => 'numeric',
-                'order_direction' => 'in:asc,desc',
-            ]);
+            $request->validate();
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw new ValidationException($e->validator);
         }
@@ -91,6 +80,6 @@ class TravelOrderController extends Controller
         ]);
 
         $orders = app(ListTravelOrderUseCase::class)->execute($filter);
-        return response()->json($orders, 200);
+        return new TravelOrderResource($orders);
     }
 }
