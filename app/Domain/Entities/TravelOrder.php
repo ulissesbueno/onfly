@@ -39,4 +39,9 @@ class TravelOrder
     {
         $this->status = $status;
     }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
 }

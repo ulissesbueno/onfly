@@ -2,12 +2,15 @@
 
 namespace App\Application\UseCases;
 
+use App\Application\Notifications\Enums\NotificationTravelOrderType;
 use App\Domain\Entities\TravelOrder;
 use App\Domain\Enums\TravelOrderStatus;
 use App\Domain\Repositories\TravelOrderRepositoryInterface;
 use Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Application\UseCases\Traits\RulesTravelOrderStatus;
+use App\Application\Notifications\NotificationTravelOrderInterface;
+use App\Events\TravelOrderStatusChange;
 
 class ApproveTravelOrderUseCase
 {
@@ -15,8 +18,9 @@ class ApproveTravelOrderUseCase
 
     private $repository;
 
-    public function __construct(TravelOrderRepositoryInterface $repository)
-    {
+    public function __construct(
+        TravelOrderRepositoryInterface $repository
+    ) {
         $this->repository = $repository;
     }
 
@@ -35,6 +39,9 @@ class ApproveTravelOrderUseCase
         $this->ruleOnlyPendingOrdersCanBeUpdated($order);
 
         $order->setStatus(TravelOrderStatus::APPROVED);
-        return $this->repository->update($order);
+        $order = $this->repository->update($order);
+        TravelOrderStatusChange::dispatch($order);
+
+        return $order;
     }
 }
