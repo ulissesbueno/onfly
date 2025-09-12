@@ -8,6 +8,7 @@ use App\Domain\Repositories\TravelOrderRepositoryInterface;
 use Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Application\UseCases\Traits\RulesTravelOrderStatus;
+use App\Events\TravelOrderStatusChange;
 
 class CancelTravelOrderUseCase
 {
@@ -15,8 +16,9 @@ class CancelTravelOrderUseCase
 
     private $repository;
 
-    public function __construct(TravelOrderRepositoryInterface $repository)
-    {
+    public function __construct(
+        TravelOrderRepositoryInterface $repository
+    ) {
         $this->repository = $repository;
     }
 
@@ -35,6 +37,9 @@ class CancelTravelOrderUseCase
         $this->ruleOnlyPendingOrdersCanBeUpdated($order);
 
         $order->setStatus(TravelOrderStatus::CANCELLED);
-        return $this->repository->update($order);
+        $order = $this->repository->update($order);
+        TravelOrderStatusChange::dispatch($order);
+
+        return $order;
     }
 }

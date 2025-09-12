@@ -19,8 +19,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(TravelOrderRepositoryInterface::class, TravelOrderRepository::class);
-        
-
     }
 
     /**
