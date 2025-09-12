@@ -2,6 +2,7 @@
 
 namespace App\Application\UseCases;
 
+use App\Application\UseCases\Exceptions\TravelOrderExceptions;
 use App\Domain\Entities\TravelOrder;
 use App\Domain\Enums\TravelOrderStatus;
 use App\Domain\Repositories\TravelOrderRepositoryInterface;
@@ -27,7 +28,7 @@ class CancelTravelOrderUseCase
         $order = $this->repository->findById($id);
         
         if (!$order) {
-            throw new Exception("Pedido não encontrado.");
+            throw TravelOrderExceptions::orderNotFound();
         }
 
         $user = JWTAuth::parseToken()->authenticate();

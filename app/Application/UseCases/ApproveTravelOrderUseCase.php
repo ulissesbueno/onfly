@@ -10,6 +10,7 @@ use Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Application\UseCases\Traits\RulesTravelOrderStatus;
 use App\Application\Notifications\NotificationTravelOrderInterface;
+use App\Application\UseCases\Exceptions\TravelOrderExceptions;
 use App\Events\TravelOrderStatusChange;
 
 class ApproveTravelOrderUseCase
@@ -29,7 +30,7 @@ class ApproveTravelOrderUseCase
         $order = $this->repository->findById($id);
         
         if (!$order) {
-            throw new Exception("Pedido não encontrado.");
+            throw TravelOrderExceptions::orderNotFound();
         }
 
         $user = JWTAuth::parseToken()->authenticate();

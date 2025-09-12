@@ -1,8 +1,11 @@
 <?php
 
+use App\Infrastructure\Repositories\Exceptions\TravelOrderRepositoryExceptions;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,15 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+
         $exceptions->render(function (Throwable $e, \Illuminate\Http\Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'success' => false,
                     'message' => $e->getMessage(),
                     'type'    => class_basename($e),
-                ], 500);
+                ], $e instanceof ValidationException ? 422 : 500);
             }
-
             return null;
         });
     })->create();
