@@ -6,6 +6,7 @@ use App\Domain\Repositories\TravelOrderRepositoryInterface;
 use App\Models\TravelOrders;
 use App\Domain\Entities\TravelOrder;
 use App\Domain\Entities\User;
+use App\Infrastructure\Repositories\Exceptions\TravelOrderRepositoryExceptions;
 
 class TravelOrderRepository implements TravelOrderRepositoryInterface
 {
@@ -43,7 +44,7 @@ class TravelOrderRepository implements TravelOrderRepositoryInterface
     {
         $travelOrder = TravelOrders::find($order->id);
         if (!$travelOrder) {
-            throw new \DomainException("Pedido não encontrado.");
+            throw TravelOrderRepositoryExceptions::orderNotFound();
         }
 
         $travelOrder->requester_name = $order->requesterName;

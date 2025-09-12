@@ -7,23 +7,20 @@ use App\Application\UseCases\CancelTravelOrderUseCase;
 use App\Application\UseCases\GetTravelOrderUseCase;
 use App\Application\UseCases\ListTravelOrderUseCase;
 use App\Application\UseCases\SaveTravelOrderUseCase;
-use App\Http\Controllers\Exceptions\ValidationException;
 use App\Http\Requests\FilterTravelOrderRequest;
 use App\Http\Requests\StoreTravelOrderRequest;
 use App\Http\Resources\TravelOrderResource;
 
 class TravelOrderController extends Controller
 {
+    const HTTP_STATUS_SUCCESS = 200;
+    const HTTP_STATUS_ERROR = 400;
+    const ERROR_PROPERTY = 'error';
+
     public function store(StoreTravelOrderRequest $request)
     {
-        try {
-            $data = $request->validated();
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw new ValidationException($e->validator);
-        }
-        
+        $data = $request->validated();
         $order = app(SaveTravelOrderUseCase::class)->execute($data);
-
         return new TravelOrderResource($order);
     }
 
@@ -32,10 +29,10 @@ class TravelOrderController extends Controller
         try {
             $order = app(ApproveTravelOrderUseCase::class)->execute($id);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return $this->respondWithError($e->getMessage(), $e->getCode());
         }
 
-        return response()->json($order, 200);
+        return response()->json($order, self::HTTP_STATUS_SUCCESS);
     }
 
     public function cancel(int $id)
@@ -43,7 +40,7 @@ class TravelOrderController extends Controller
         try {
             $order = app(CancelTravelOrderUseCase::class)->execute($id);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return $this->respondWithError($e->getMessage(), $e->getCode());
         }
 
         return response()->json($order, 200);
@@ -52,10 +49,10 @@ class TravelOrderController extends Controller
 
     public function show(int $id)
     {
-        $order = app(GetTravelOrderUseCase::class)->execute($id);
-
-        if (!$order) {
-            return response()->json(['error' => 'Pedido não encontrado.'], 404);
+        try {
+            $order = app(GetTravelOrderUseCase::class)->execute($id);
+        } catch (\Exception $e) {
+            return $this->respondWithError($e->getMessage(), $e->getCode());
         }
 
         return new TravelOrderResource($order);
@@ -63,11 +60,7 @@ class TravelOrderController extends Controller
 
     public function index(FilterTravelOrderRequest $request)
     {
-        try {
-            $request->validate();
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw new ValidationException($e->validator);
-        }
+        $request->validate();
 
         $filter = $request->only([
             'status',
@@ -81,5 +74,10 @@ class TravelOrderController extends Controller
 
         $orders = app(ListTravelOrderUseCase::class)->execute($filter);
         return new TravelOrderResource($orders);
+    }
+
+    private function respondWithError($message, $code = self::HTTP_STATUS_ERROR)
+    {
+        return response()->json([self::ERROR_PROPERTY => $message], $code);
     }
 }

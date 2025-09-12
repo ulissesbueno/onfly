@@ -2,19 +2,23 @@
 
 namespace App\Application\UseCases\Traits;
 
+use App\Application\UseCases\Exceptions\TravelOrderExceptions;
+
 trait RulesTravelOrderStatus
 {
+    const STATUS_PENDING = 'pending';
+
     private function ruleSomeUserCannotChangeOwnRequest($order, $currentUserId): void
     {
         if ($order->userId === $currentUserId) {
-            throw new \Exception("O usuário que fez o pedido não pode alterar o status.");
+            throw TravelOrderExceptions::userCannotChangeOwnRequest();
         }
     }
 
     private function ruleOnlyPendingOrdersCanBeUpdated($order): void
     {
-        if ($order->status !== 'pending') {
-            throw new \Exception("Apenas pedidos com status 'pendente' podem ser atualizados.");
+        if ($order->status !== self::STATUS_PENDING) {
+            throw TravelOrderExceptions::onlyPendingOrdersCanBeUpdated();
         }
     }
 }
