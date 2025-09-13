@@ -7,9 +7,12 @@ use App\Application\UseCases\CancelTravelOrderUseCase;
 use App\Application\UseCases\GetTravelOrderUseCase;
 use App\Application\UseCases\ListTravelOrderUseCase;
 use App\Application\UseCases\SaveTravelOrderUseCase;
+use App\Domain\Entities\TravelOrder;
+use App\Domain\Enums\TravelOrderStatus;
 use App\Http\Requests\FilterTravelOrderRequest;
 use App\Http\Requests\StoreTravelOrderRequest;
 use App\Http\Resources\TravelOrderResource;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class TravelOrderController extends Controller
 {
@@ -20,14 +23,26 @@ class TravelOrderController extends Controller
     public function store(StoreTravelOrderRequest $request)
     {
         $data = $request->validated();
-        $order = app(SaveTravelOrderUseCase::class)->execute($data);
+
+        $order = app(SaveTravelOrderUseCase::class)->execute(
+            new TravelOrder(
+                requesterName: $data['requester_name'],
+                destination: $data['destination'],
+                departureDate: new \DateTime($data['departure_date']),
+                returnDate: new \DateTime($data['return_date']),
+                status: TravelOrderStatus::PENDING
+            )
+        );
         return new TravelOrderResource($order);
     }
 
     public function approve(int $id)
     {   
+        $user = JWTAuth::parseToken()->authenticate();
+        $currentUserId = $user?->id;
+
         try {
-            $order = app(ApproveTravelOrderUseCase::class)->execute($id);
+            $order = app(ApproveTravelOrderUseCase::class)->execute($id, $currentUserId);
         } catch (\Exception $e) {
             return $this->respondWithError($e->getMessage(), $e->getCode());
         }
@@ -37,8 +52,11 @@ class TravelOrderController extends Controller
 
     public function cancel(int $id)
     {   
+        $user = JWTAuth::parseToken()->authenticate();
+        $currentUserId = $user?->id;
+
         try {
-            $order = app(CancelTravelOrderUseCase::class)->execute($id);
+            $order = app(CancelTravelOrderUseCase::class)->execute($id, $currentUserId);
         } catch (\Exception $e) {
             return $this->respondWithError($e->getMessage(), $e->getCode());
         }

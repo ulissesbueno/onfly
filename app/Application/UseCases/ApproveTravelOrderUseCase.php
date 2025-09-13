@@ -2,14 +2,10 @@
 
 namespace App\Application\UseCases;
 
-use App\Application\Notifications\Enums\NotificationTravelOrderType;
 use App\Domain\Entities\TravelOrder;
 use App\Domain\Enums\TravelOrderStatus;
 use App\Domain\Repositories\TravelOrderRepositoryInterface;
-use Exception;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Application\UseCases\Traits\RulesTravelOrderStatus;
-use App\Application\Notifications\NotificationTravelOrderInterface;
 use App\Application\UseCases\Exceptions\TravelOrderExceptions;
 use App\Events\TravelOrderStatusChange;
 
@@ -25,7 +21,7 @@ class ApproveTravelOrderUseCase
         $this->repository = $repository;
     }
 
-    public function execute(int $id): ?TravelOrder
+    public function execute(int $id, int $currentUserId): ?TravelOrder
     {
         $order = $this->repository->findById($id);
         
@@ -33,11 +29,8 @@ class ApproveTravelOrderUseCase
             throw TravelOrderExceptions::orderNotFound();
         }
 
-        $user = JWTAuth::parseToken()->authenticate();
-        $currentUserId = $user?->id;
-
-        $this->ruleSomeUserCannotChangeOwnRequest($order, $currentUserId);
-        $this->ruleOnlyPendingOrdersCanBeUpdated($order);
+        $this->ruleSomeUserCannotChangeOwnRequest($order->user->id, $currentUserId);
+        $this->ruleOnlyPendingOrdersCanBeUpdated($order->getStatus());
 
         $order->setStatus(TravelOrderStatus::APPROVED);
         $order = $this->repository->update($order);

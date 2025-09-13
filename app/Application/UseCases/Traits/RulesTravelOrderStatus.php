@@ -8,16 +8,16 @@ trait RulesTravelOrderStatus
 {
     const STATUS_PENDING = 'pending';
 
-    private function ruleSomeUserCannotChangeOwnRequest($order, $currentUserId): void
+    private function ruleSomeUserCannotChangeOwnRequest(int $orderUserId, int $currentUserId): void
     {
-        if ($order->userId === $currentUserId) {
+        if ($orderUserId === $currentUserId) {
             throw TravelOrderExceptions::userCannotChangeOwnRequest();
         }
     }
 
-    private function ruleOnlyPendingOrdersCanBeUpdated($order): void
+    private function ruleOnlyPendingOrdersCanBeUpdated(string $status): void
     {
-        if ($order->status !== self::STATUS_PENDING) {
+        if ($status !== self::STATUS_PENDING) {
             throw TravelOrderExceptions::onlyPendingOrdersCanBeUpdated();
         }
     }

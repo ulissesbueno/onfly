@@ -6,8 +6,6 @@ use App\Application\UseCases\Exceptions\TravelOrderExceptions;
 use App\Domain\Entities\TravelOrder;
 use App\Domain\Enums\TravelOrderStatus;
 use App\Domain\Repositories\TravelOrderRepositoryInterface;
-use Exception;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Application\UseCases\Traits\RulesTravelOrderStatus;
 use App\Events\TravelOrderStatusChange;
 
@@ -23,7 +21,7 @@ class CancelTravelOrderUseCase
         $this->repository = $repository;
     }
 
-    public function execute(int $id): ?TravelOrder
+    public function execute(int $id, int $currentUserId): ?TravelOrder
     {
         $order = $this->repository->findById($id);
         
@@ -31,11 +29,8 @@ class CancelTravelOrderUseCase
             throw TravelOrderExceptions::orderNotFound();
         }
 
-        $user = JWTAuth::parseToken()->authenticate();
-        $currentUserId = $user?->id;
-
-        $this->ruleSomeUserCannotChangeOwnRequest($order, $currentUserId);
-        $this->ruleOnlyPendingOrdersCanBeUpdated($order);
+        $this->ruleSomeUserCannotChangeOwnRequest($order->user->id, $currentUserId);
+        $this->ruleOnlyPendingOrdersCanBeUpdated($order->getStatus());
 
         $order->setStatus(TravelOrderStatus::CANCELLED);
         $order = $this->repository->update($order);
