@@ -27,7 +27,7 @@ class SendNoticationTravelOrder //implements ShouldQueue
 
         // Lógica para enviar a notificação (exemplo: email, SMS, etc.)
 
-        Log::info("Notificação enviada para o usuário {$travelOrder->userId}: $message");
+        Log::info("Notificação enviada para o usuário {$travelOrder->user->name}: $message");
     }
 
     private function getMessageByStatus(string $status): string
