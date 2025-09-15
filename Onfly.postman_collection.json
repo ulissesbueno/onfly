@@ -10,130 +10,6 @@
 			"name": "Auth",
 			"item": [
 				{
-					"name": "Register",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Faz o parse do JSON da resposta",
-									"let response = pm.response.json();",
-									"pm.collectionVariables.set(\"accessToken\", response.token);",
-									"// (Opcional) Loga no console do Postman",
-									"console.log(\"Token salvo:\", response.token);"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"User 1\",\n    \"email\": \"test@email.com\",\n    \"password\": \"123123\",\n    \"password_confirmation\": \"123123\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{host}}/api/register",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Faz o parse do JSON da resposta",
-									"let response = pm.response.json();",
-									"pm.collectionVariables.set(\"accessToken\", response.token);",
-									"// (Opcional) Loga no console do Postman",
-									"console.log(\"Token salvo:\", response.token);"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"test@email.com\",\n    \"password\": \"123123\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{host}}/api/login",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Me",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{host}}/api/me",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"me"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Health",
 					"request": {
 						"method": "GET",
@@ -152,6 +28,55 @@
 							"path": [
 								"api",
 								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/api/sanctum/token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"sanctum",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/api/user",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"user"
 							]
 						}
 					},
@@ -176,16 +101,21 @@
 							]
 						},
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{host}}/api/travel-order/list",
+							"raw": "{{host}}/api/travel-order",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"travel-order",
-								"list"
+								"travel-order"
 							]
 						}
 					},
@@ -303,15 +233,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{host}}/api/travel-order/{{orderId}}/approve",
+							"raw": "{{host}}/api/travel-order/{{orderId}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"travel-order",
-								"{{orderId}}",
-								"approve"
+								"{{orderId}}"
 							]
 						}
 					},
@@ -330,7 +259,7 @@
 								}
 							]
 						},
-						"method": "PUT",
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Accept",
@@ -343,15 +272,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{host}}/api/travel-order/{{orderId}}/cancel",
+							"raw": "{{host}}/api/travel-order/{{orderId}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"travel-order",
-								"{{orderId}}",
-								"cancel"
+								"{{orderId}}"
 							]
 						}
 					},
