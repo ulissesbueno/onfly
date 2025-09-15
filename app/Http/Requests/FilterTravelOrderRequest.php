@@ -24,8 +24,8 @@ class FilterTravelOrderRequest extends FormRequest
         return [
             'status' => 'in:pending,approved,canceled',
             'destination' => 'string|max:255',
-            'periodo_start' => 'date',
-            'periodo_end' => 'date',
+            'departure_date' => 'date',
+            'return_date' => 'date',
             'page' => 'numeric',
             'order_direction' => 'in:asc,desc',
         ];

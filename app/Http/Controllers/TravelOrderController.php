@@ -78,13 +78,11 @@ class TravelOrderController extends Controller
 
     public function index(FilterTravelOrderRequest $request)
     {
-        $request->validate();
-
         $filter = $request->only([
             'status',
             'destination',
-            'periodo_start',
-            'periodo_end',
+            'departure_date',
+            'return_date',
             'page',
             'per_page',
             'order_direction'

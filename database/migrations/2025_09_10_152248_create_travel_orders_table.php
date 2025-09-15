@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('requester_name');
             $table->string('destination');
-            $table->date('departure_date');
-            $table->date('return_date');
+            $table->datetime('departure_date');
+            $table->datetime('return_date');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
