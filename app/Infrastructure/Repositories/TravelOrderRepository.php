@@ -102,12 +102,12 @@ class TravelOrderRepository implements TravelOrderRepositoryInterface
             $query->where('destination', 'like', '%' . $filter['destination'] . '%');
         }
 
-        if (!empty($filter['periodo_start'])) {
-            $query->where('departure_date', '>=', $filter['periodo_start']);
+        if (!empty($filter['departure_date'])) {
+            $query->where('departure_date', '>=', $filter['departure_date']);
         }
 
-        if (!empty($filter['periodo_end'])) {
-            $query->where('return_date', '<=', $filter['periodo_end']);
+        if (!empty($filter['return_date'])) {
+            $query->where('return_date', '<=', $filter['return_date']);
         }
 
         if (empty($filter['order_direction'])) {
@@ -119,7 +119,7 @@ class TravelOrderRepository implements TravelOrderRepositoryInterface
         if (empty($filter['page'])) {
             $filter['page'] = self::PAGE;
         }
-
+        
         $per_page = self::PER_PAGE;
         $query->skip(($filter['page'] - 1) * $per_page)->take($per_page);
     }
