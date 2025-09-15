@@ -42,3 +42,27 @@ O microserviço estará disponível em `http://localhost:8080` (ou porta configu
   ```
 
 - Deixei uma collection do Postman para ajudar: Onfly.postman_collection.json
+
+
+# Onfly Test
+
+### Pontos de melhoria
+
+1. Separar todas as exceptions de forma mais clara e organizada.
+2. Atualmente, as notificações estão síncronas, mas poderiam ser assíncronas — o que seria o ideal.
+3. O cadastro de usuário não recebeu tanta atenção. Esse processo poderia estar em outro microserviço ou até utilizar uma solução mais apropriada, como o **Keycloak**.
+4. Nos testes unitários, priorizei os casos que considerei mais importantes:
+    - Registrar um pedido de viagem;
+    - Aprovar um pedido de viagem;
+    - Cancelar um pedido de viagem.
+        
+        (Ainda assim, existem várias outras situações que poderiam ser cobertas).
+        
+5. Para documentação da API, seria possível usar o **Swagger**, mas considerei desnecessário para os objetivos propostos.
+
+---
+
+### Dúvidas
+
+1. Quem exatamente seria o **usuário solicitante**? Usuário e solicitante representam a mesma entidade ou são papéis diferentes?
+2. Seguindo a regra de que o usuário só pode acessar seus próprios cadastros, como ele poderia aprovar ou reprovar viagens de outros usuários?
