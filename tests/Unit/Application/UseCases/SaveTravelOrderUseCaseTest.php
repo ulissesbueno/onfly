@@ -29,8 +29,8 @@ class SaveTravelOrderUseCaseTest extends TestCase
         $order = new TravelOrder(
             requesterName: 'John Doe',
             destination: 'Paris',
-            departureDate: new \DateTime('2023-10-01'),
-            returnDate: new \DateTime('2023-10-10'),
+            departureDate: new \DateTime('2023-10-01 10:00:00'),
+            returnDate: new \DateTime('2023-10-10 11:00:00'),
             status: TravelOrderStatus::PENDING
         );
 
