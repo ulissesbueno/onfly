@@ -11,7 +11,7 @@ Este repositório foi criado para o teste técnico da empresa Onfly. Ele contém
 
 1. **Clone o repositório:**
     ```bash
-    git clone https://github.com/ulissesbueno/onfly.git
+    git clone git@github.com:ulissesbueno/onfly.git
     cd onfly
     ```
 
