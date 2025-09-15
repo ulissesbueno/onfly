@@ -12,5 +12,8 @@ done
 # Rodar migrations
 php artisan migrate --force
 
+# Rodar seeders
+php artisan db:seed --force
+
 # Executa o comando original do container (php-fpm)
 exec "$@"

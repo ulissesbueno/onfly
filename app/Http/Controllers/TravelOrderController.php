@@ -12,7 +12,6 @@ use App\Domain\Enums\TravelOrderStatus;
 use App\Http\Requests\FilterTravelOrderRequest;
 use App\Http\Requests\StoreTravelOrderRequest;
 use App\Http\Resources\TravelOrderResource;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class TravelOrderController extends Controller
 {
@@ -36,9 +35,9 @@ class TravelOrderController extends Controller
         return new TravelOrderResource($order);
     }
 
-    public function approve(int $id)
+    public function update(int $id)
     {   
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $currentUserId = $user?->id;
 
         try {
@@ -50,9 +49,9 @@ class TravelOrderController extends Controller
         return response()->json($order, self::HTTP_STATUS_SUCCESS);
     }
 
-    public function cancel(int $id)
+    public function destroy(int $id)
     {   
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $currentUserId = $user?->id;
 
         try {

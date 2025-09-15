@@ -14,7 +14,7 @@ class UserOwnerManager
             return $this->userId;
         }
 
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
         $this->userId = $user?->id;
 
         return $this->userId;

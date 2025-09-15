@@ -1,23 +1,39 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TravelOrderController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+Route::post('/sanctum/token', function (Request $request) {
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+        'device_name' => 'required',
+    ]);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (! $user || ! Hash::check($request->password, $user->password)) {
+        throw ValidationException::withMessages([
+            'email' => ['The provided credentials are incorrect.'],
+        ]);
+    }
+
+    return $user->createToken($request->device_name)->plainTextToken;
+});
 
 Route::get('/health', function() {
     return response()->json(['status' => 'OK'], 200);
 });
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::middleware('auth:api')->group(function () {
-    Route::get('/me', [AuthController::class, 'me']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-
-    Route::get('/travel-order/list', [TravelOrderController::class, 'index']);
-    Route::post('/travel-order', [TravelOrderController::class, 'store']);
-    Route::get('/travel-order/{id}', [TravelOrderController::class, 'show']);
-    Route::put('/travel-order/{id}/approve', [TravelOrderController::class, 'approve']);
-    Route::put('/travel-order/{id}/cancel', [TravelOrderController::class, 'cancel']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::resource('/travel-order', TravelOrderController::class);
 });

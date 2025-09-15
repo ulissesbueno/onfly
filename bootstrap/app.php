@@ -19,23 +19,5 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-
-        $exceptions->render(function (Throwable $e, \Illuminate\Http\Request $request) {
-
-            $code = match (true) {
-                $e instanceof ValidationException => 422,
-                $e instanceof TravelOrderRepositoryExceptions => 400,
-                $e instanceof AuthenticationException => 401,
-                default => 500,
-            };
-
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $e->getMessage(),
-                    'type'    => class_basename($e),
-                ], $code);
-            }
-            return null;
-        });
+        
     })->create();
