@@ -1,6 +1,6 @@
 # Onfly Microserviço
 
-Este repositório contém um microserviço para a plataforma Onfly.
+Este repositório foi criado para o teste técnico da empresa Onfly. Ele contém um microserviço desenvolvido como parte do processo seletivo, seguindo os requisitos e padrões solicitados pela equipe técnica.
 
 ## Pré-requisitos
 
@@ -11,7 +11,7 @@ Este repositório contém um microserviço para a plataforma Onfly.
 
 1. **Clone o repositório:**
     ```bash
-    git clone https://github.com/seu-usuario/onfly.git
+    git clone https://github.com/ulissesbueno/onfly.git
     cd onfly
     ```
 
@@ -25,7 +25,7 @@ Este repositório contém um microserviço para a plataforma Onfly.
 
 ## Uso
 
-O microserviço estará disponível em `http://localhost:8000` (ou porta configurada).
+O microserviço estará disponível em `http://localhost:8080` (ou porta configurada).
 
 ## Scripts úteis
 
@@ -33,3 +33,12 @@ O microserviço estará disponível em `http://localhost:8000` (ou porta configu
   ```bash
   docker-compose down
   ```
+
+## Testes
+
+- Para rodar os testes unitários:
+  ```bash
+  docker exec app.onfly php artisan test
+  ```
+
+- Deixei uma collection do Postman para ajudar: Onfly.postman_collection.json

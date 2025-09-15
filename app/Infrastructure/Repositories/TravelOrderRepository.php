@@ -19,8 +19,8 @@ class TravelOrderRepository implements TravelOrderRepositoryInterface
         $travelOrder = new TravelOrders();
         $travelOrder->requester_name = $order->requesterName;
         $travelOrder->destination = $order->destination;
-        $travelOrder->departure_date = $order->departureDate->format('Y-m-d');
-        $travelOrder->return_date = $order->returnDate->format('Y-m-d');
+        $travelOrder->departure_date = $order->departureDate;
+        $travelOrder->return_date = $order->returnDate;
         $travelOrder->status = $order->status;
         $travelOrder->save();
 
