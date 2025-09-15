@@ -6,6 +6,9 @@ services:
       - ./:/var/www/
     depends_on:
       - onfly-db
+    working_dir: /var/www
+    entrypoint: ["/var/www/.docker/entrypoint.sh"]
+    command: ["php-fpm"]
 
   onfly-nginx:
     container_name: nginx.onfly
