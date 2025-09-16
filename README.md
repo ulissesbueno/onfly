@@ -22,6 +22,12 @@ Este repositório foi criado para o teste técnico da empresa Onfly. Ele contém
     ```bash
     docker-compose up --build
     ```
+    ou
+
+    ```bash
+    docker compose up --build
+    ```
+
 
 ## Uso
 
@@ -32,6 +38,11 @@ O microserviço estará disponível em `http://localhost:8080` (ou porta configu
 - Parar o serviço:
   ```bash
   docker-compose down
+  ```
+  ou
+
+  ```bash
+  docker compose down
   ```
 
 ## Testes
